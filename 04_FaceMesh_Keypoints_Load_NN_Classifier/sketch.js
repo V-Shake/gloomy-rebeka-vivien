@@ -40,7 +40,7 @@ let eyebrowPoints = [
   285, 336, 285, 295, 293, 335, 276, 337, 338
 ];
 
-// Modify the preload function to handle possible sound loading errors
+// Fix the sound loading paths - using the wrong directory structure
 function preload() {
   // Load the FaceMesh model
   faceMesh = ml5.faceMesh();
@@ -48,18 +48,22 @@ function preload() {
   // Preload sounds with error handling
   soundFormats('mp3', 'wav');
   
-  // Load sounds with error callbacks
-  happySound = loadSound('../sounds/sunshine.mp3', 
-    () => console.log('Happy sound loaded successfully'), 
-    () => console.error('Failed to load happy sound'));
-  
-  sadSound = loadSound('../sounds/sad.mp3', 
-    () => console.log('Sad sound loaded successfully'), 
-    () => console.error('Failed to load sad sound'));
-  
-  wowSound = loadSound('../sounds/wow.mp3', 
-    () => console.log('Wow sound loaded successfully'), 
-    () => console.error('Failed to load wow sound'));
+  try {
+    // Use direct paths instead of relative paths
+    happySound = loadSound('sounds/happy.mp3', 
+      () => console.log('Happy sound loaded successfully'), 
+      (err) => console.error('Failed to load happy sound:', err));
+    
+    sadSound = loadSound('sounds/sad.mp3', 
+      () => console.log('Sad sound loaded successfully'), 
+      (err) => console.error('Failed to load sad sound:', err));
+    
+    wowSound = loadSound('sounds/wow.mp3', 
+      () => console.log('Wow sound loaded successfully'), 
+      (err) => console.error('Failed to load wow sound:', err));
+  } catch (e) {
+    console.error("Error loading sounds:", e);
+  }
 }
 
 function setup() {
@@ -221,20 +225,20 @@ function draw() {
         prevClassification = classification;
         console.log("New classification:", classification); // Debug line
         
-        // Convert classification to lowercase to handle case variations
-        const lowerClassification = classification.toLowerCase();
-        
-        // Set target color based on detected emotion
-        if (lowerClassification.includes("sad")) {
+        // Use exact matching instead of includes for more precision
+        if (classification === "sad") {
           targetColor = { r: 0, g: 0, b: 255 }; // Blue for sad
           playEmotionSound("sad");
-        } else if (lowerClassification.includes("happy")) {
+        } 
+        else if (classification === "happy") {
           targetColor = { r: 255, g: 255, b: 0 }; // Yellow for happy
           playEmotionSound("happy");
-        } else if (lowerClassification.includes("neutral")) {
+        } 
+        else if (classification === "neutral") {
           targetColor = { r: 0, g: 250, b: 100 }; // Green for neutral
           // No sound for neutral
-        } else if (lowerClassification.includes("surprise") || lowerClassification.includes("suprise")) {
+        } 
+        else if (classification === "suprise" || classification === "surprise") {
           targetColor = { r: 255, g: 100, b: 0 }; // Orange for surprise
           playEmotionSound("suprise");
         }
@@ -310,33 +314,41 @@ function modelLoaded() {
   isModelLoaded = true;
 }
 
-// Fix the playEmotionSound function
+// Fix the playEmotionSound function to be more robust
 function playEmotionSound(emotion) {
   let currentTime = millis();
   console.log("Attempting to play sound for:", emotion); // Debug line
   
   // Only play sounds if enough time has passed since the last sound
   if (currentTime - lastSoundTime > soundCooldown) {
-    // Stop any currently playing sounds
-    if (happySound && happySound.isLoaded() && happySound.isPlaying()) happySound.stop();
-    if (sadSound && sadSound.isLoaded() && sadSound.isPlaying()) sadSound.stop();
-    if (wowSound && wowSound.isLoaded() && wowSound.isPlaying()) wowSound.stop();
+    // Stop any currently playing sounds first
+    try {
+      if (happySound && typeof happySound.stop === 'function') happySound.stop();
+      if (sadSound && typeof sadSound.stop === 'function') sadSound.stop();
+      if (wowSound && typeof wowSound.stop === 'function') wowSound.stop();
+    } catch (e) {
+      console.error("Error stopping sounds:", e);
+    }
     
-    // Play the appropriate sound based on emotion
-    // Check for variations in spelling
-    if ((emotion === "happy" || emotion === "Happy") && happySound && happySound.isLoaded()) {
-      console.log("Playing happy sound");
-      happySound.play();
-      lastSoundTime = currentTime;
-    } else if ((emotion === "sad" || emotion === "Sad") && sadSound && sadSound.isLoaded()) {
-      console.log("Playing sad sound");
-      sadSound.play();
-      lastSoundTime = currentTime;
-    } else if ((emotion === "suprise" || emotion === "surprise" || emotion === "Surprise") 
-        && wowSound && wowSound.isLoaded()) {
-      console.log("Playing surprise sound");
-      wowSound.play();
-      lastSoundTime = currentTime;
+    // Play the appropriate sound based on emotion with strict checking
+    try {
+      if (emotion === "happy" && happySound && typeof happySound.play === 'function') {
+        console.log("Playing happy sound");
+        happySound.play();
+        lastSoundTime = currentTime;
+      } 
+      else if (emotion === "sad" && sadSound && typeof sadSound.play === 'function') {
+        console.log("Playing sad sound");
+        sadSound.play();
+        lastSoundTime = currentTime;
+      } 
+      else if (emotion === "suprise" && wowSound && typeof wowSound.play === 'function') {
+        console.log("Playing surprise sound");
+        wowSound.play();
+        lastSoundTime = currentTime;
+      }
+    } catch (e) {
+      console.error("Error playing sound:", e);
     }
   }
 }
