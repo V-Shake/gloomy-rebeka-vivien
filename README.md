@@ -2,5 +2,5 @@ Gloomy ist eine interaktive Lampe, die in Echtzeit auf deine Gesichtsausdrücke 
 Fröhlich, 
 Neutral, 
 Traurig, 
-Überrascht, 
+Überrascht. 
 Je nach dem erkannten Gesichtsausdruck ändert Gloomy die Farbe, um deine Emotionen widerzuspiegeln. Diese Anpassung schafft eine atmosphärische Umgebung, die deine Stimmung unterstützt und dabei hilft, dich besser zu fühlen oder dich zu entspannen.
