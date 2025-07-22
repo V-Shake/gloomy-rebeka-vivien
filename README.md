@@ -30,6 +30,6 @@ The sounds used in this project are from Pixabay:
 
 ## Credits
 
-This code is based on the repository from our Creative ML lectures: https://github.com/fsewing/SG_WP_Creative_ML
+This code is based on the repository from our lecturers: https://github.com/fsewing/SG_WP_Creative_ML
 
 We extended the original codebase by training it with different emotions to enable emotion recognition and feedback through visual and audio responses.
