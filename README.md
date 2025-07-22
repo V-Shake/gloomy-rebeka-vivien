@@ -1,6 +1,6 @@
 # Gloomy - Emotion-Responsive Lamp
 
-Gloomy is an interactive lamp that responds to your facial expressions in real-time. This project was created during a 5-day university workshop to explore creative machine learning applications, with the core implementation completed in just 1 day.
+Gloomy is an interactive lamp that responds to your facial expressions in real-time. This project was created during a 5-day university workshop at HfG Schwäbisch Gmünd (4th semester Interaction Design program) to explore creative machine learning applications, with the core implementation completed in just 1 day.
 
 ## Concept
 
